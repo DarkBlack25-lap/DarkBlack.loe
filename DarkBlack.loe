@@ -1,7 +1,8 @@
--- HUB PROFISSIONAL (para uso em seus próprios jogos)
+-- HUB PROFISSIONAL (corrigido para PlayerGui)
 
-if game.CoreGui:FindFirstChild("ProHub") then
-    game.CoreGui.ProHub:Destroy()
+-- Remove GUI antiga
+if game.Players.LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("ProHub") then
+    game.Players.LocalPlayer.PlayerGui.ProHub:Destroy()
 end
 
 local player = game.Players.LocalPlayer
@@ -12,14 +13,16 @@ local function getHumanoid()
 end
 
 -- GUI BASE
-local sg = Instance.new("ScreenGui", game.CoreGui)
+local sg = Instance.new("ScreenGui")
 sg.Name = "ProHub"
+sg.Parent = player:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame", sg)
 main.Size = UDim2.new(0, 420, 0, 260)
 main.Position = UDim2.new(0.5, -210, 0.5, -130)
 main.BackgroundColor3 = Color3.fromRGB(18,18,22)
-main.Active, main.Draggable = true, true
+main.Active = true
+main.Draggable = true
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
 
 -- TOP BAR
@@ -91,6 +94,7 @@ local function createButton(parent, text, callback)
     btn.BackgroundColor3 = Color3.fromRGB(35,35,40)
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.Gotham
+    btn.TextSize = 14
     Instance.new("UICorner", btn)
 
     btn.MouseButton1Click:Connect(callback)
@@ -108,7 +112,7 @@ createTab("Misc")
 
 switchPage("Player")
 
--- PLAYER FUNÇÕES
+-- PLAYER
 createButton(playerPage, "Speed 50", function()
     getHumanoid().WalkSpeed = 50
 end)
