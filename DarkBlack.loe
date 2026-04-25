@@ -1,44 +1,40 @@
--- REMOVE ANTIGO
-local player = game.Players.LocalPlayer
-local pg = player:WaitForChild("PlayerGui")
+-- PULO INFINITO
+local infiniteJump = false
 
-if pg:FindFirstChild("BlackReignHub") then
-    pg.BlackReignHub:Destroy()
-end
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infiniteJump then
+        local hum = getHumanoid()
+        hum:ChangeState("Jumping")
+    end
+end)
 
--- FUNÇÃO HUMANOID
-local function getHumanoid()
-    local char = player.Character or player.CharacterAdded:Wait()
-    return char:WaitForChild("Humanoid")
-end
+createButton(playerPage, "Pulo Infinito ON/OFF", function()
+    infiniteJump = not infiniteJump
+end)
 
--- GUI
-local sg = Instance.new("ScreenGui", pg)
-sg.Name = "BlackReignHub"
+-- FLY
+local flying = false
+local speed = 50
 
--- BOTÃO FLUTUANTE
-local toggle = Instance.new("TextButton", sg)
-toggle.Size = UDim2.new(0,50,0,50)
-toggle.Position = UDim2.new(0,20,0.5,0)
-toggle.Text = "⚡"
-toggle.BackgroundColor3 = Color3.fromRGB(30,30,30)
-toggle.TextColor3 = Color3.new(1,1,1)
-toggle.Active = true
-toggle.Draggable = true
-Instance.new("UICorner", toggle)
+createButton(playerPage, "Fly ON/OFF", function()
+    flying = not flying
 
--- MAIN
-local main = Instance.new("Frame", sg)
-main.Size = UDim2.new(0,350,0,220)
-main.Position = UDim2.new(0.5,-175,0.5,-110)
-main.BackgroundColor3 = Color3.fromRGB(18,18,22)
-main.Visible = true
-main.Active = true
-main.Draggable = true
-Instance.new("UICorner", main)
+    local char = player.Character
+    local hrp = char:WaitForChild("HumanoidRootPart")
 
--- RGB BORDA
-local stroke = Instance.new("UIStroke", main)
-stroke.Thickness = 3
+    if flying then
+        local bv = Instance.new("BodyVelocity")
+        bv.MaxForce = Vector3.new(1e5,1e5,1e5)
+        bv.Parent = hrp
 
-task.spawn(function()
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if flying then
+                bv.Velocity = workspace.CurrentCamera.CFrame.LookVector * speed
+            end
+        end)
+    else
+        if hrp:FindFirstChildOfClass("BodyVelocity") then
+            hrp:FindFirstChildOfClass("BodyVelocity"):Destroy()
+        end
+    end
+end)
