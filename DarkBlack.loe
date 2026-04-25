@@ -1,150 +1,44 @@
--- HUB PROFISSIONAL (corrigido para PlayerGui)
+-- REMOVE ANTIGO
+local player = game.Players.LocalPlayer
+local pg = player:WaitForChild("PlayerGui")
 
--- Remove GUI antiga
-if game.Players.LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("ProHub") then
-    game.Players.LocalPlayer.PlayerGui.ProHub:Destroy()
+if pg:FindFirstChild("BlackReignHub") then
+    pg.BlackReignHub:Destroy()
 end
 
-local player = game.Players.LocalPlayer
-
+-- FUNÇÃO HUMANOID
 local function getHumanoid()
     local char = player.Character or player.CharacterAdded:Wait()
     return char:WaitForChild("Humanoid")
 end
 
--- GUI BASE
-local sg = Instance.new("ScreenGui")
-sg.Name = "ProHub"
-sg.Parent = player:WaitForChild("PlayerGui")
+-- GUI
+local sg = Instance.new("ScreenGui", pg)
+sg.Name = "BlackReignHub"
 
+-- BOTÃO FLUTUANTE
+local toggle = Instance.new("TextButton", sg)
+toggle.Size = UDim2.new(0,50,0,50)
+toggle.Position = UDim2.new(0,20,0.5,0)
+toggle.Text = "⚡"
+toggle.BackgroundColor3 = Color3.fromRGB(30,30,30)
+toggle.TextColor3 = Color3.new(1,1,1)
+toggle.Active = true
+toggle.Draggable = true
+Instance.new("UICorner", toggle)
+
+-- MAIN
 local main = Instance.new("Frame", sg)
-main.Size = UDim2.new(0, 420, 0, 260)
-main.Position = UDim2.new(0.5, -210, 0.5, -130)
+main.Size = UDim2.new(0,350,0,220)
+main.Position = UDim2.new(0.5,-175,0.5,-110)
 main.BackgroundColor3 = Color3.fromRGB(18,18,22)
+main.Visible = true
 main.Active = true
 main.Draggable = true
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", main)
 
--- TOP BAR
-local top = Instance.new("Frame", main)
-top.Size = UDim2.new(1,0,0,40)
-top.BackgroundColor3 = Color3.fromRGB(25,25,30)
-Instance.new("UICorner", top).CornerRadius = UDim.new(0, 12)
+-- RGB BORDA
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 3
 
-local title = Instance.new("TextLabel", top)
-title.Text = "PRO HUB"
-title.Size = UDim2.new(1,0,1,0)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.new(1,1,1)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 16
-
--- SIDE MENU
-local side = Instance.new("Frame", main)
-side.Size = UDim2.new(0,110,1,-40)
-side.Position = UDim2.new(0,0,0,40)
-side.BackgroundColor3 = Color3.fromRGB(22,22,26)
-
-local content = Instance.new("Frame", main)
-content.Size = UDim2.new(1,-110,1,-40)
-content.Position = UDim2.new(0,110,0,40)
-content.BackgroundTransparency = 1
-
-local pages = {}
-
-local function createPage(name)
-    local page = Instance.new("Frame", content)
-    page.Size = UDim2.new(1,0,1,0)
-    page.Visible = false
-    page.BackgroundTransparency = 1
-
-    local layout = Instance.new("UIListLayout", page)
-    layout.Padding = UDim.new(0,6)
-
-    pages[name] = page
-    return page
-end
-
-local function switchPage(name)
-    for _,p in pairs(pages) do
-        p.Visible = false
-    end
-    pages[name].Visible = true
-end
-
-local function createTab(name)
-    local btn = Instance.new("TextButton", side)
-    btn.Size = UDim2.new(1,0,0,35)
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(30,30,35)
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 14
-    Instance.new("UICorner", btn)
-
-    btn.MouseButton1Click:Connect(function()
-        switchPage(name)
-    end)
-end
-
-local function createButton(parent, text, callback)
-    local btn = Instance.new("TextButton", parent)
-    btn.Size = UDim2.new(1,-10,0,35)
-    btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(35,35,40)
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 14
-    Instance.new("UICorner", btn)
-
-    btn.MouseButton1Click:Connect(callback)
-end
-
--- PÁGINAS
-local playerPage = createPage("Player")
-local worldPage = createPage("World")
-local miscPage = createPage("Misc")
-
--- TABS
-createTab("Player")
-createTab("World")
-createTab("Misc")
-
-switchPage("Player")
-
--- PLAYER
-createButton(playerPage, "Speed 50", function()
-    getHumanoid().WalkSpeed = 50
-end)
-
-createButton(playerPage, "Speed 100", function()
-    getHumanoid().WalkSpeed = 100
-end)
-
-createButton(playerPage, "Super Jump", function()
-    getHumanoid().JumpPower = 100
-end)
-
-createButton(playerPage, "Reset Player", function()
-    local h = getHumanoid()
-    h.WalkSpeed = 16
-    h.JumpPower = 50
-end)
-
--- WORLD
-createButton(worldPage, "Low Gravity", function()
-    workspace.Gravity = 60
-end)
-
-createButton(worldPage, "Normal Gravity", function()
-    workspace.Gravity = 196.2
-end)
-
--- MISC
-createButton(miscPage, "Rejoin", function()
-    game:GetService("TeleportService"):Teleport(game.PlaceId, player)
-end)
-
-createButton(miscPage, "Close Hub", function()
-    sg:Destroy()
-end)
+task.spawn(function()
